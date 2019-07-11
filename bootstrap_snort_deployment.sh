@@ -15,22 +15,22 @@ trap 'err_report $LINENO' ERR
 . config
 sudo apt update
 sudo apt install -y gcc libpcre3-dev zlib1g-dev libpcap-dev openssl libssl-dev libnghttp2-dev libdumbnet-dev bison flex libdnet luajit
-sudo mkdir ~/snort_src 
+sudo mkdir snort_src 
 #installiere data acquisition library
 wget -P ~ https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz
-tar -xvzf ~/snort_src/daq-2.0.6.tar.gz
+tar -xvzf ~/daq-2.0.6.tar.gz
 cd daq-2.0.6
 ./configure && make && sudo make install
-cd ~/snort_src
-sudo wget https://www.snort.org/downloads/snort/snort-2.9.12.tar.gz
-sudo tar -xvzf snort-2.9.12.tar.gz
-cd snort-2.9.12
+cd ../snort_src
+sudo wget https://www.snort.org/downloads/snort/snort-2.9.13.tar.gz
+sudo tar -xvzf snort-2.9.13.tar.gz
+cd snort-2.9.13
 #HIER Geht etwas schief! /etc/ wird nicht nach /etc/snort kopiert!
 sudo ./configure --disable-open-appid --enable-sourcefire && sudo make && sudo make install
 sudo ldconfig
 
 #ist das nötig? kann auskommentiert werden?
-#sudo cp -r ~/snort_src/snort-2.9.12/etc/* /etc/snort
+#sudo cp -r ~/snort_src/snort-2.9.13/etc/* /etc/snort
 
 #symbolischer link nach sbin
 sudo ln -s /usr/local/bin/snort /usr/sbin/snort
@@ -55,8 +55,8 @@ sudo touch /etc/snort/rules/black_list.rules
 sudo touch /etc/snort/rules/local.rules
 
 sudo mkdir /etc/snort/etc/
-sudo cp ~/snort_src/snort-2.9.12/etc/*.conf* /etc/snort/etc
-sudo cp ~/snort_src/snort-2.9.12/etc/*.map /etc/snort/etc
+sudo cp etc/*.conf* /etc/snort/etc
+sudo cp etc/*.map /etc/snort/etc
 
 #DL für community-rules: <- FUNKTIONIRET NICHT BEIM DEPLOYMENT, TODo
 #wget https://www.snort.org/rules/community -O ~/community.tar.gz
@@ -66,8 +66,8 @@ sudo cp ~/snort_src/snort-2.9.12/etc/*.map /etc/snort/etc
 
 #DL für Subscriber-Rules:
 #kann das auskommentiert werden wgn. pulledpork?
-cd ~
-wget https://www.snort.org/rules/snortrules-snapshot-29120.tar.gz?oinkcode=$OINK_CODE -O ~/subscriber.tar.gz
+cd ../..
+wget https://www.snort.org/rules/snortrules-snapshot-29130.tar.gz?oinkcode=$OINK_CODE -O ~/subscriber.tar.gz
 mkdir ~/subscriber-rules
 sudo tar -xvf ~/subscriber.tar.gz -C ~/subscriber-rules
 sudo cp -r ~/subscriber-rules/* /etc/snort/etc
@@ -79,8 +79,9 @@ sudo cp -r ~/subscriber-rules/* /etc/snort/etc
 #in snort.conf LINE !!!!!!!!!325!!!!!!!!!! auskommentieren
 sudo touch /etc/rsyslog.d/snort_syslog.conf
 #ipadresse dynamisch einrichten!!
+sudo -s
 sudo echo "local5.* @$MY_IP:1514;RSYSLOG_SyslogProtocol23Format" >> /etc/rsyslog.d/snort_syslog.conf
-
+exit
 
 #starte Snort (community-rules)
 #sudo /usr/sbin/snort -dev -v -c /etc/snort/
@@ -114,11 +115,11 @@ sudo sed -i '/^# legacy dynamic/,/^# Event/ s/include/# include/g' /etc/snort/et
 
 #hier werden nochmal alle + zusätzliche rules gezogen & konfiguriert
 sudo apt-get -y install libwww-perl
-cd ~
+
 git clone https://github.com/shirkdog/pulledpork.git
-mv ~/pulledpork.conf ~/pulledpork/etc/pulledpork.conf
-mv ~/disablesid.conf ~/pulledpork/etc/disablesid.conf
-mv ~/enablesid.conf ~/pulledpork/etc/enablesid.conf
+mv snort_deployment/pulledpork.conf ~/pulledpork/etc/pulledpork.conf
+mv snort_deployment/disablesid.conf ~/pulledpork/etc/disablesid.conf
+mv snort_deployment/enablesid.conf ~/pulledpork/etc/enablesid.conf
 sudo sed -i "s/OINKCODE/$OINK_CODE/g" ~/pulledpork/etc/pulledpork.conf
 
 cd pulledpork
