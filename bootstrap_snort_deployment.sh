@@ -117,9 +117,9 @@ sudo sed -i '/^# legacy dynamic/,/^# Event/ s/include/# include/g' /etc/snort/et
 sudo apt-get -y install libwww-perl
 
 git clone https://github.com/shirkdog/pulledpork.git
-mv snort_deployment/pulledpork.conf ~/pulledpork/etc/pulledpork.conf
-mv snort_deployment/disablesid.conf ~/pulledpork/etc/disablesid.conf
-mv snort_deployment/enablesid.conf ~/pulledpork/etc/enablesid.conf
+cp pulledpork.conf pulledpork/etc/pulledpork.conf
+cp disablesid.conf pulledpork/etc/disablesid.conf
+cp enablesid.conf pulledpork/etc/enablesid.conf
 sudo sed -i "s/OINKCODE/$OINK_CODE/g" ~/pulledpork/etc/pulledpork.conf
 
 cd pulledpork
