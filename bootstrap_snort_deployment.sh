@@ -78,10 +78,10 @@ sudo cp -r ~/subscriber-rules/* /etc/snort/etc
 ####WICHTIG####: LOCAL5 in snort.conf schreiben!!!
 #in snort.conf LINE !!!!!!!!!325!!!!!!!!!! auskommentieren
 sudo touch /etc/rsyslog.d/snort_syslog.conf
-#ipadresse dynamisch einrichten!!
-sudo -s
+
+#
+sudo chmod 777 /etc/rsyslog.d/snort_syslog.conf
 sudo echo "local5.* @$MY_IP:1514;RSYSLOG_SyslogProtocol23Format" >> /etc/rsyslog.d/snort_syslog.conf
-exit
 
 #starte Snort (community-rules)
 #sudo /usr/sbin/snort -dev -v -c /etc/snort/
